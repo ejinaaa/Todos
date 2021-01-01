@@ -39,6 +39,9 @@ build/Release
 
 # Dependency directories
 node_modules/
+.eslintrc.json
+package-lock.json
+package.json
 jspm_packages/
 
 # TypeScript v1 declaration files

@@ -1,0 +1,91 @@
+.todoBox {
+  width: 1000px;
+  padding: 50px;
+  background-color: #fff;
+  border: 2px solid lightgrey;
+  color: #000;
+}
+.title {
+  margin: 0;
+  color: #666;
+  font-size: 50px;
+  text-align: center;
+}
+.todoForm {
+  position: relative;
+  width: 600px;
+  height: 50px;
+  margin: 80px auto 30px auto;
+}
+label[for=text_box] {
+  position: absolute;
+  top: 2px;
+  left: 10px;
+  width: 500px;
+  height: 30px;
+  color: lightgrey;
+  font-size: 20px;
+}
+.textBox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 500px;
+  height: 30px;
+  border: 1px solid #666;
+  border-radius: 2px;
+  font-size: 20px;
+  text-indent: 5px;
+}
+.addBtn {
+  position: absolute;
+  top: 2px;
+  left: 520px;
+  width: 80px;
+  height: 30px;
+  background-color: #666;
+  border: none;
+  border-radius: 2px;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+.todos {
+  width: 660px;
+  padding-left: 0;
+  margin: 0 auto;
+  list-style: none;
+}
+.todos > li {
+  display: flex;
+  margin-top: 20px;
+}
+.checkbox {
+  width: 20px;
+  height: 20px;
+}
+.todoText {
+  width: 600px;
+  height: 24px;
+  margin-left: 5px;
+  border-bottom: 1px solid grey;
+  color: #666;
+  font-weight: 600;
+  text-indent: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.todoText.checked {
+  color: lightgrey;
+  font-weight: 400;
+  text-decoration: line-through;
+}
+.removeBtn {
+  width: 25px;
+  height: 25px;
+  margin-left: 10px;
+  background: #fff;
+  border: 1px solid #666;
+  border-radius: 2px;
+  cursor: pointer;
+}
