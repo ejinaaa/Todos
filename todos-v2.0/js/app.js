@@ -15,6 +15,12 @@ const render = () => {
       <i class="remove-todo far fa-times-circle"></i>
     </li>`).join('');
   
+  if (todos.length === todos.filter(({ completed }) => completed).length) {
+    $completeAllCheckbox.checked = true;
+  }
+  if (todos.length !== todos.filter(({ completed }) => completed).length) {
+    $completeAllCheckbox.checked = false;
+  }
 
   $completedCount.textContent = todos.filter(({ completed }) => completed).length;
   $activeCount.textContent = todos.filter(({ completed }) => !completed).length;
@@ -24,7 +30,7 @@ const fetchTodo = () => {
   todos = [
     { id: 1, content: 'HTML', completed: true },
     { id: 2, content: 'CSS', completed: true },
-    { id: 3, content: 'JavaScript', completed: false }
+    { id: 3, content: 'JavaScript', completed: true }
   ];
   todos.sort((todo1, todo2) => (todo1.id > todo2.id ? -1 : (todo1.id < todo2.id ? 1 : 0)));
 
@@ -63,13 +69,6 @@ $inputTodo.addEventListener('keyup', e => {
 $todos.addEventListener('click', e => {
   if (e.target.matches('.todo-item > .remove-todo')) removeTodo(e);
   if (e.target.matches('.todo-item > label')) toggleTodo(e);
-
-  if (todos.length === todos.filter(({ completed }) => completed).length) {
-    $completeAllCheckbox.checked = true;
-  }
-  if (todos.length !== todos.filter(({ completed }) => completed).length) {
-    $completeAllCheckbox.checked = false;
-  }
 });
 
 $completeAll.addEventListener('click', () => {
