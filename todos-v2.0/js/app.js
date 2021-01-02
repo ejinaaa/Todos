@@ -52,7 +52,7 @@ const toggleTodo = e => {
 
 window.addEventListener('DOMContentLoaded', fetchTodo);
 
-$inputTodo.addEventListener('keydown', e => {
+$inputTodo.addEventListener('keyup', e => {
   if (e.key !== 'Enter') return;
   if (!$inputTodo.value) return;
 
