@@ -30,7 +30,7 @@ const fetchTodo = () => {
   todos = [
     { id: 1, content: 'HTML', completed: true },
     { id: 2, content: 'CSS', completed: true },
-    { id: 3, content: 'JavaScript', completed: true }
+    { id: 3, content: 'JavaScript', completed: false }
   ];
   todos.sort((todo1, todo2) => (todo1.id > todo2.id ? -1 : (todo1.id < todo2.id ? 1 : 0)));
 
