@@ -37,26 +37,41 @@ const fetchTodo = () => {
   render();
 };
 
-const newId = () => Math.max(...todos.map(({ id }) => id), 0);
-
-const addTodo = e => {
+const addTodo = (() => {
+  const newId = () => Math.max(...todos.map(({ id }) => id), 0);
+  return e => {
   todos = [{ id: newId() + 1, content: e.target.value, completed: false }, ...todos];
   render();
-};
+  };
+})();
 
-const removeTodo = e => {
-  todos = todos.filter(todo => +e.target.parentNode.id !== todo.id);
+const removeTodo = targetId => {
+  todos = todos.filter(todo => +targetId !== todo.id);
   render();
 };
 
-const toggleTodo = e => {
+const toggleTodo = targetId => {
   todos = todos.map(({ id, content, completed}) => ({ id,
     content,
-    completed: +e.target.parentNode.id === id ? !completed : completed }));
+    completed: +targetId === id ? !completed : completed }));
   render();
 };
 
-window.addEventListener('DOMContentLoaded', fetchTodo);
+const checkCompleteAll = () => {
+  if (!$completeAllCheckbox.checked) {
+    todos = todos.map(({ id, content }) => ({ id, content, completed: false }));
+  } else {
+    todos = todos.map(({ id, content }) => ({ id, content, completed: true }));
+  }
+  render();
+}
+
+const removeCompletedTodo = () => {
+  todos = todos.filter(({ completed }) => !completed);
+  render();
+}
+
+document.addEventListener('DOMContentLoaded', fetchTodo);
 
 $inputTodo.addEventListener('keyup', e => {
   if (e.key !== 'Enter') return;
@@ -67,22 +82,17 @@ $inputTodo.addEventListener('keyup', e => {
 });
 
 $todos.addEventListener('click', e => {
-  if (e.target.matches('.todo-item > .remove-todo')) removeTodo(e);
-  if (e.target.matches('.todo-item > label')) toggleTodo(e);
+  const targetId = e.target.parentNode.id;
+  if (e.target.matches('.todo-item > .remove-todo')) removeTodo(targetId);
+  if (e.target.matches('.todo-item > label')) toggleTodo(targetId);
 });
 
 $completeAll.addEventListener('click', () => {
-  if (!$completeAllCheckbox.checked) {
-    todos = todos.map(({ id, content }) => ({ id, content, completed: false }));
-  } else {
-    todos = todos.map(({ id, content }) => ({ id, content, completed: true }));
-  }
-  render();
+  checkCompleteAll();
 });
 
 $removeCompletedBtn.addEventListener('click', () => {
-  todos = todos.filter(({ completed }) => !completed);
-  render();
+  removeCompletedTodo();
 });
 
 // 2021-01-02 23:30 ~ 2021-01-03 02:20 완성
