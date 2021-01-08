@@ -53,7 +53,7 @@ const addTodo = (() => {
 })();
 
 const removeTodo = id => {
-  todos = todos.filter((todo) => !(todo.id === +id));
+  todos = todos.filter((todo) => todo.id !== +id);
   render();
 };
 
@@ -76,7 +76,7 @@ const removeCompletedTodos = () => {
 document.addEventListener('DOMContentLoaded', fetchTodo);
 
 $inputTodo.addEventListener('keyup', e => {
-  if (!(e.key === 'Enter')) return;
+  if (e.key !== 'Enter') return;
   addTodo();
   $inputTodo.value = '';
 });
