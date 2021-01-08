@@ -19,16 +19,13 @@ const changeCompleteAllCheckbox = () => {
 };
 
 const render = () => {
-  $todos.innerHTML = todos.map(({ id, content, completed }) => {
-    return `<li id="${id}" class="todo-item">
+  $todos.innerHTML = todos.map(({ id, content, completed }) => `<li id="${id}" class="todo-item">
     <input id="ck-${id}" class="checkbox" type="checkbox" ${completed ? 'checked' : ''}>
     <label for="ck-${id}">${content}</label>
     <i class="remove-todo far fa-times-circle"></i>
-  </li>`
-  }).join('');
+  </li>`).join('');
 
   countTodos();
-
   changeCompleteAllCheckbox();
 };
 
@@ -40,42 +37,38 @@ const fetchTodo = () => {
   ];
 
   todos = [...todos].sort((todo1, todo2) => todo1.id < todo2.id ? 1 : todo1.id > todo2.id ? -1 : 0);
-
   render();
 };
 
-const generateId = () => {
-  return Math.max(...todos.map(({ id }) => id), 0);
-};
-
-const addTodo = () => {
-  if (!$inputTodo.value) return;
-  todos = [{ id: generateId() + 1, content: $inputTodo.value, completed: false }, ...todos];
-
-  render();
-};
+const addTodo = (() => {
+  const generateId = () => {
+    return Math.max(...todos.map(({ id }) => id), 0);
+  };
+  
+  return () => {
+    if (!$inputTodo.value) return;
+    todos = [{ id: generateId() + 1, content: $inputTodo.value, completed: false }, ...todos];
+    render();
+  }
+})();
 
 const removeTodo = id => {
   todos = todos.filter((todo) => !(todo.id === +id));
-
   render();
 };
 
 const toggleTodo = targetId => {
   todos = todos.map(({ id, content, completed }) => ({id, content, completed: (id === +targetId ? !completed : completed)}));
-
   render();
 };
 
 const checkCompleteAll = () => {
   todos = todos.map(({ id, content, completed }) => ({ id, content, completed: $completeAllCheckbox.checked ? true : false}));
-
   render();
 };
 
 const removeCompletedTodos = () => {
   todos = todos.filter(({ completed }) => !completed);
-
   render();
 };
 
