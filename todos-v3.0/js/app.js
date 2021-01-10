@@ -14,12 +14,6 @@ const $completedTodosBtn = document.getElementById('completed');
 
 let todos = [];
 
-// Functions
-// const countCompletedTodos = () => {
-//   $completedCounter.textContent = todos.filter(({ completed }) => completed).length;
-//   $uncompletedCounter.textContent = todos.filter(({ completed }) => !completed).length;
-// };
-
 const render = (() => {
   const innerHtml = (id, content, completed) => `<li id="${id}" class="todo-item">
 <input id="ck-${id}" class="checkbox" type="checkbox" ${completed ? 'checked' : ''}>
