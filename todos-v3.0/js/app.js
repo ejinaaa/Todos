@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 // Nodes
 const $inputTodo = document.querySelector('.input-todo');
 const $todos = document.querySelector('.todos');
@@ -22,23 +21,26 @@ text-decoration: ${completed ? 'line-through' : ''}">${content}</label>
 <i class="remove-todo far fa-times-circle"></i></li>`;
 
   return () => {
-    if ($activeTodosBtn.className === 'active') {
-      $todos.innerHTML = todos.filter(({ completed }) => completed === false)
-        .map(({ id, content, completed }) => innerHtml(id, content, completed)).join('');
+    switch ('active') {
+      case $activeTodosBtn.className:
+        $todos.innerHTML = todos.filter(({ completed }) => completed === false)
+          .map(({ id, content, completed }) => innerHtml(id, content, completed)).join('');
 
-      $completedCounter.textContent = 0;
-      $uncompletedCounter.textContent = $todos.children.length;
-    } else if ($completedTodosBtn.className === 'active') {
-      $todos.innerHTML = todos.filter(({ completed }) => completed === true)
-        .map(({ id, content, completed }) => innerHtml(id, content, completed)).join('');
+        $completedCounter.textContent = 0;
+        $uncompletedCounter.textContent = $todos.children.length;
+        break;
+      case $completedTodosBtn.className:
+        $todos.innerHTML = todos.filter(({ completed }) => completed === true)
+          .map(({ id, content, completed }) => innerHtml(id, content, completed)).join('');
 
-      $completedCounter.textContent = $todos.children.length;
-      $uncompletedCounter.textContent = 0;
-    } else {
-      $todos.innerHTML = todos.map(({ id, content, completed }) => innerHtml(id, content, completed)).join('');
+        $completedCounter.textContent = $todos.children.length;
+        $uncompletedCounter.textContent = 0;
+        break;
+      default:
+        $todos.innerHTML = todos.map(({ id, content, completed }) => innerHtml(id, content, completed)).join('');
 
-      $completedCounter.textContent = todos.filter(({ completed }) => completed).length;
-      $uncompletedCounter.textContent = todos.filter(({ completed }) => !completed).length;
+        $completedCounter.textContent = todos.filter(({ completed }) => completed).length;
+        $uncompletedCounter.textContent = todos.length - $completedCounter.textContent;
     }
   };
 })();
@@ -86,11 +88,7 @@ const toggleTodo = target => {
 };
 
 const toggleCompletedAll = () => {
-  todos = todos.map(({ id, content }) => ({
-    id,
-    content,
-    completed: !!$completedAllCheckbox.checked
-  }));
+  todos = todos.map(todo => (todo.completed ? todo : { ...todo, completed: true }));
   render();
 };
 
@@ -99,15 +97,25 @@ const removeCompletedTodos = () => {
   render();
 };
 
+const removeActiveClass = () => {
+  [...$nav.children].forEach(childNode => childNode.classList.remove('active'));
+};
+
 // Events
 document.addEventListener('DOMContentLoaded', fetchTodo);
 
 $inputTodo.addEventListener('keyup', e => {
   if (!$inputTodo.value) return;
   if (e.key !== 'Enter') return;
+  if ($completedTodosBtn.className === 'active') {
+    removeActiveClass();
+    $allTodosBtn.classList.add('active');
+  }
+
   addTodo();
-  $inputTodo.value = '';
   uncheckCompleteAll();
+
+  $inputTodo.value = '';
 });
 
 $todos.addEventListener('click', e => {
@@ -131,9 +139,7 @@ $completedCounterBtn.addEventListener('click', () => {
 });
 
 $nav.addEventListener('click', e => {
-  [...e.currentTarget.children].forEach(childNode => {
-    childNode.classList.remove('active');
-  });
+  removeActiveClass();
   e.target.classList.add('active');
 
   render();
