@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 // Nodes
 const $inputTodo = document.querySelector('.input-todo');
 const $todos = document.querySelector('.todos');
@@ -14,51 +15,39 @@ const $completedTodosBtn = document.getElementById('completed');
 let todos = [];
 
 // Functions
-const countCompletedTodos = () => {
-  $completedCounter.textContent = todos.filter(({ completed }) => completed).length;
-  $uncompletedCounter.textContent = todos.filter(({ completed }) => !completed).length;
-};
+// const countCompletedTodos = () => {
+//   $completedCounter.textContent = todos.filter(({ completed }) => completed).length;
+//   $uncompletedCounter.textContent = todos.filter(({ completed }) => !completed).length;
+// };
 
-const renderAll = () => {
-  $todos.innerHTML = todos.map(({ id, content, completed }) => `<li id="${id}" class="todo-item">
-  <input id="ck-${id}" class="checkbox" type="checkbox" ${completed ? 'checked' : ''}>
-  <label for="ck-${id}" style="color: ${completed ? 'lightgrey' : ''}; 
-  text-decoration: ${completed ? 'line-through' : ''}">${content}</label>
-  <i class="remove-todo far fa-times-circle"></i></li>`).join('');
+const render = (() => {
+  const innerHtml = (id, content, completed) => `<li id="${id}" class="todo-item">
+<input id="ck-${id}" class="checkbox" type="checkbox" ${completed ? 'checked' : ''}>
+<label for="ck-${id}" style="color: ${completed ? 'lightgrey' : ''}; 
+text-decoration: ${completed ? 'line-through' : ''}">${content}</label>
+<i class="remove-todo far fa-times-circle"></i></li>`;
 
-  countCompletedTodos();
-};
+  return () => {
+    if ($activeTodosBtn.className === 'active') {
+      $todos.innerHTML = todos.filter(({ completed }) => completed === false)
+        .map(({ id, content, completed }) => innerHtml(id, content, completed)).join('');
 
-const renderActive = () => {
-  $todos.innerHTML = todos.filter(({ completed }) => completed === false)
-    .map(({ id, content, completed }) => `<li id="${id}" class="todo-item">
-  <input id="ck-${id}" class="checkbox" type="checkbox" ${completed ? 'checked' : ''}>
-  <label for="ck-${id}" style="color: ${completed ? 'lightgrey' : ''}; 
-  text-decoration: ${completed ? 'line-through' : ''}">${content}</label>
-  <i class="remove-todo far fa-times-circle"></i></li>`).join('');
+      $completedCounter.textContent = 0;
+      $uncompletedCounter.textContent = $todos.children.length;
+    } else if ($completedTodosBtn.className === 'active') {
+      $todos.innerHTML = todos.filter(({ completed }) => completed === true)
+        .map(({ id, content, completed }) => innerHtml(id, content, completed)).join('');
 
-  $completedCounter.textContent = 0;
-  $uncompletedCounter.textContent = $todos.children.length;
-};
+      $completedCounter.textContent = $todos.children.length;
+      $uncompletedCounter.textContent = 0;
+    } else {
+      $todos.innerHTML = todos.map(({ id, content, completed }) => innerHtml(id, content, completed)).join('');
 
-const renderCompleted = () => {
-  $todos.innerHTML = todos.filter(({ completed }) => completed === true)
-    .map(({id, content, completed }) => `<li id="${id}" class="todo-item">
-  <input id="ck-${id}" class="checkbox" type="checkbox" ${completed ? 'checked' : ''}>
-  <label for="ck-${id}" style="color: ${completed ? 'lightgrey' : ''}; 
-  text-decoration: ${completed ? 'line-through' : ''}">${content}</label>
-  <i class="remove-todo far fa-times-circle"></i></li>`).join('');
-
-  $completedCounter.textContent = $todos.children.length;
-  $uncompletedCounter.textContent = 0;
-};
-
-const render = () => {
-  if ($activeTodosBtn.className !== 'active'
-    && $completedTodosBtn.className !== 'active') renderAll();
-  else if ($activeTodosBtn.className === 'active') renderActive();
-  else if ($completedTodosBtn.className === 'active') renderCompleted();
-};
+      $completedCounter.textContent = todos.filter(({ completed }) => completed).length;
+      $uncompletedCounter.textContent = todos.filter(({ completed }) => !completed).length;
+    }
+  };
+})();
 
 const fetchTodo = () => {
   todos = [
@@ -68,18 +57,21 @@ const fetchTodo = () => {
   ];
 
   todos.sort((todo1, todo2) => (todo1.id < todo2.id ? 1 : (todo1.id > todo2.id ? -1 : 0)));
-  renderAll();
-};
-
-const generateId = () => Math.max(...todos.map(({ id }) => id), 0) + 1;
-
-const addTodo = () => {
-  todos = [{ id: generateId(), content: $inputTodo.value, completed: false }, ...todos];
   render();
 };
 
+const addTodo = (() => {
+  const generateId = () => Math.max(...todos.map(({ id }) => id), 0) + 1;
+
+  return () => {
+    todos = [{ id: generateId(), content: $inputTodo.value, completed: false }, ...todos];
+    render();
+  };
+})();
+
 const removeTodo = targetId => {
-  todos = todos.filter(({id}) => id !== +targetId);
+  todos = todos.filter(({ id }) => id !== +targetId);
+  if (todos.length === todos.filter(({ completed }) => completed).length) $completedAllCheckbox.checked = true;
   render();
 };
 
@@ -145,16 +137,10 @@ $completedCounterBtn.addEventListener('click', () => {
 });
 
 $nav.addEventListener('click', e => {
-  if (e.target === $allTodosBtn) {
-    renderAll();
-  } else if (e.target === $activeTodosBtn) {
-    renderActive();
-  } else if (e.target === $completedTodosBtn) {
-    renderCompleted();
-  }
-
   [...e.currentTarget.children].forEach(childNode => {
     childNode.classList.remove('active');
   });
   e.target.classList.add('active');
+
+  render();
 });
